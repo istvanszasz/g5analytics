@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 </head>
 <body>
-<div id='content' ng-app='G5Data' ng-controller='MainController'>
+<div id='content' class="container" ng-app='G5Data' ng-controller='MainController'>
     <input type="file" id="file" name="file"/>
     <button ng-click="add()">Läs in</button>
 
@@ -32,12 +32,16 @@
                         <tr>
                             <th>Quarter</th>
                             <th>Average</th>
+                            <th>Min</th>
+                            <th>Max</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr ng-repeat="quarter in data.quarters">
                             <td>{{quarter.quarter}}</td>
                             <td>{{quarter.average}}</td>
+                            <td>{{quarter.min}}</td>
+                            <td>{{quarter.max}}</td>
                         </tr>
                     </tbody>
                 </table>

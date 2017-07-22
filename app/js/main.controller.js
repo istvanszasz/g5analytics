@@ -72,7 +72,7 @@ app.controller("MainController", function($scope, $http){
         }
 
         console.log($scope.games);
-        // $scope.$apply();
+        $scope.$apply();
     }
 
     $scope.countrySelected = function(game){
@@ -108,10 +108,34 @@ app.controller("MainController", function($scope, $http){
                 {
                     year: year,
                     quarters: [
-                        {quarter: 1, data: firstQuarter, average: average(_.map(firstQuarter, function(data){return data.placement}))},
-                        {quarter: 2, data: secondQuarter, average: average(_.map(secondQuarter, function(data){return data.placement}))},
-                        {quarter: 3, data: thirdQuarter, average: average(_.map(thirdQuarter, function(data){return data.placement}))},
-                        {quarter: 4, data: fourthQuarter, average: average(_.map(fourthQuarter, function(data){return data.placement}))},
+                        {
+                            quarter: 1,
+                            data: firstQuarter,
+                            average: average(_.map(firstQuarter, function(data){return data.placement})),
+                            min: _.min(_.pluck(firstQuarter, 'placement')),
+                            max: _.max(_.pluck(firstQuarter, 'placement'))
+                        },
+                        {
+                            quarter: 2,
+                            data: secondQuarter,
+                            average: average(_.map(secondQuarter, function(data){return data.placement})),
+                            min: _.min(_.pluck(secondQuarter, 'placement')),
+                            max: _.max(_.pluck(secondQuarter, 'placement'))
+                        },
+                        {
+                            quarter: 3,
+                            data: thirdQuarter,
+                            average: average(_.map(thirdQuarter, function(data){return data.placement})),
+                            min: _.min(_.pluck(thirdQuarter, 'placement')),
+                            max: _.max(_.pluck(thirdQuarter, 'placement'))
+                        },
+                        {
+                            quarter: 4,
+                            data: fourthQuarter,
+                            average: average(_.map(fourthQuarter, function(data){return data.placement})),
+                            min: _.min(_.pluck(fourthQuarter, 'placement')),
+                            max: _.max(_.pluck(fourthQuarter, 'placement'))
+                        },
                     ]
                 });
         })
@@ -119,7 +143,6 @@ app.controller("MainController", function($scope, $http){
         console.log(game);
     }
 });
-
 
 function encode_utf8(s) {
   return unescape(encodeURIComponent(s));

@@ -1,4 +1,2 @@
-* ladda ner filerna direkt
 * skapa yeomanprojekt
-* skapa github
-* lägga upp i github
+* visa senaste veckans data för spel/land
