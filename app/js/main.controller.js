@@ -3,6 +3,8 @@ var app = angular.module('G5Data',[]);
 app.controller("MainController", function($scope, $http){
 
     $scope.gamesWanted = ['hidden city', 'mahjong journey', 'secret society', 'twin moons society', 'supermarket mania'];
+    $scope.blacklistedWords = ['hd', 'full', '2'];
+    $scope.useFilter = true;
 
     $scope.add = function() {
         var f = document.getElementById('file').files[0],
@@ -50,7 +52,8 @@ app.controller("MainController", function($scope, $http){
             var countryName = data[2];
             var date = data[3];
 
-            if(!name || !_.find($scope.gamesWanted, function(gameWanted){ return name.toLowerCase().indexOf(gameWanted) !== -1})){
+            if($scope.useFilter && (!name || !_.find($scope.gamesWanted, function(gameWanted){ return name.toLowerCase().indexOf(gameWanted) !== -1})
+                     || _.find($scope.blacklistedWords, function(blacklistedWord){ return name.toLowerCase().indexOf(blacklistedWord) !== -1}))){
                 continue; //if no name or game not wanted (not in gamesWanted list), move on
             }
 
