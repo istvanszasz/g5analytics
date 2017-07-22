@@ -74,7 +74,6 @@ app.controller("MainController", function($scope, $http){
             country.gameData.push({placement: parseInt(place), date: new Date(date)});
         }
 
-        console.log($scope.games);
         $scope.$apply();
     }
 
@@ -142,7 +141,7 @@ app.controller("MainController", function($scope, $http){
                     ]
                 });
         })
-
+        addChart(game);
         console.log(game);
     }
 });
@@ -171,4 +170,70 @@ function getData(http, url){
     },
     url: url
     });
+}
+
+function addChart(game){
+    var ctx = document.getElementById(game.name).getContext('2d');
+    var datasets = getDataForChart(game);
+    var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: ["1", "2", "3", "4"],
+        datasets: datasets,
+        // datasets: [{
+        //     label: 'Averag placement in quarters',
+        //     data: [12, 19, 3, 5, 2, 3],
+        //     backgroundColor: [
+        //         'rgba(255, 99, 132, 0.2)',
+        //         'rgba(54, 162, 235, 0.2)',
+        //         'rgba(255, 206, 86, 0.2)',
+        //         'rgba(75, 192, 192, 0.2)',
+        //     ],
+        //     borderColor: [
+        //         'rgba(255,99,132,1)',
+        //         'rgba(54, 162, 235, 1)',
+        //         'rgba(255, 206, 86, 1)',
+        //         'rgba(75, 192, 192, 1)',
+        //     ],
+        //     borderWidth: 1
+        // }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+    });
+}
+
+function getDataForChart(game){
+    var dataSet = [];
+
+    for(var i = 0; i < game.sortedData.length; i++){
+        var data = game.sortedData[i];
+        var color = getRandomColor();
+        var set = {
+            label: data.country,
+            data: [data.quarters[0].average, data.quarters[1].average, data.quarters[2].average, data.quarters[3].average],
+            fill:false,
+            backgroundColor: color,
+            borderColor: color,
+            borderWidth: 1
+        }
+        dataSet.push(set);
+    }
+    return dataSet;    
+}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
