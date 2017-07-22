@@ -1,3 +1,2 @@
 * skapa yeomanprojekt
 * visa senaste veckans data för spel/land
-* kanske visa en chart ovanför tabellen för alla valda länder
