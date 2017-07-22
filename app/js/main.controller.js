@@ -57,7 +57,7 @@ app.controller("MainController", function($scope, $http){
             var game = _.find($scope.games, function(game){ return game.name === name});
 
             if(!game){
-                game = { name: name, countries : []}
+                game = { name: name, countries : [], sortedData:[]}
                 $scope.games.push(game);
             }
 
@@ -76,7 +76,6 @@ app.controller("MainController", function($scope, $http){
     }
 
     $scope.countrySelected = function(game){
-        game.sortedData = [];        
         var country = _.find(game.countries, function(c){ return c.name === game.selectedCountry});
 
         var gameData = country.gameData;
@@ -106,6 +105,7 @@ app.controller("MainController", function($scope, $http){
             
             game.sortedData.push(
                 {
+                    country:country.name,
                     year: year,
                     quarters: [
                         {

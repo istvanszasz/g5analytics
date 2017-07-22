@@ -8,14 +8,15 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 </head>
 <body>
-<div id='content' class="container" ng-app='G5Data' ng-controller='MainController'>
+<div id='content' class="container" ng-app='G5Data' ng-controller='MainController' style="margin-top:10px;">
     <input type="file" id="file" name="file"/>
-    <button ng-click="add()">Läs in</button>
+    <button ng-click="add()">Read file</button>
 
-    <button ng-click="iphone()">iPhone</button>
-    <button ng-click="ipad()">iPad</button>
-    <button ng-click="google()">Google Play</button>
-    
+    <div style="float:right;">
+        <button ng-click="iphone()">iPhone</button>
+        <button ng-click="ipad()">iPad</button>
+        <button ng-click="google()">Google Play</button>
+    </div>
 <hr/>
 
     <div ng-repeat="game in games | orderBy: 'name'">
@@ -25,7 +26,7 @@
             </select>
 
             <div ng-repeat="data in game.sortedData">
-                <h4>{{data.year}}</h4>
+                <h4>{{data.year}} - {{data.country}}</h4>
 
                 <table class="table table-bordered table-striped table-sm">
                     <thead>
