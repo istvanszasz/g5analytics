@@ -105,44 +105,63 @@ app.controller("MainController", function($scope, $http){
             var thirdQuarter = _.filter(gameData, function(data) { return data.quarter === 3 && data.year === year});
             var fourthQuarter = _.filter(gameData, function(data) { return data.quarter === 4 && data.year === year});
             
-            game.sortedData.push(
-                {
+            var quarterData = {
                     country:country.name,
                     year: year,
-                    quarters: [
-                        {
-                            quarter: 1,
-                            data: firstQuarter,
-                            average: average(_.map(firstQuarter, function(data){return data.placement})),
-                            min: _.min(_.pluck(firstQuarter, 'placement')),
-                            max: _.max(_.pluck(firstQuarter, 'placement'))
-                        },
-                        {
-                            quarter: 2,
-                            data: secondQuarter,
-                            average: average(_.map(secondQuarter, function(data){return data.placement})),
-                            min: _.min(_.pluck(secondQuarter, 'placement')),
-                            max: _.max(_.pluck(secondQuarter, 'placement'))
-                        },
-                        {
-                            quarter: 3,
-                            data: thirdQuarter,
-                            average: average(_.map(thirdQuarter, function(data){return data.placement})),
-                            min: _.min(_.pluck(thirdQuarter, 'placement')),
-                            max: _.max(_.pluck(thirdQuarter, 'placement'))
-                        },
-                        {
-                            quarter: 4,
-                            data: fourthQuarter,
-                            average: average(_.map(fourthQuarter, function(data){return data.placement})),
-                            min: _.min(_.pluck(fourthQuarter, 'placement')),
-                            max: _.max(_.pluck(fourthQuarter, 'placement'))
-                        },
-                    ]
-                });
+                    quarters: []
+            };
+
+            if(firstQuarter.length > 0){
+                quarterData.quarters.push(
+                    {
+                        quarter: 1,
+                        data: firstQuarter,
+                        average: average(_.map(firstQuarter, function(data){return data.placement})),
+                        min: _.min(_.pluck(firstQuarter, 'placement')),
+                        max: _.max(_.pluck(firstQuarter, 'placement'))
+                    }
+                )
+            }
+
+            if(secondQuarter.length > 0){
+                quarterData.quarters.push(
+                    {
+                        quarter: 2,
+                        data: secondQuarter,
+                        average: average(_.map(secondQuarter, function(data){return data.placement})),
+                        min: _.min(_.pluck(secondQuarter, 'placement')),
+                        max: _.max(_.pluck(secondQuarter, 'placement'))
+                    }
+                )
+            }
+
+            if(thirdQuarter.length > 0){
+                quarterData.quarters.push(
+                    {
+                        quarter: 3,
+                        data: thirdQuarter,
+                        average: average(_.map(thirdQuarter, function(data){return data.placement})),
+                        min: _.min(_.pluck(thirdQuarter, 'placement')),
+                        max: _.max(_.pluck(thirdQuarter, 'placement'))
+                    }
+                )
+            }
+
+            if(fourthQuarter.length > 0){
+                quarterData.quarters.push(
+                    {
+                        quarter: 4,
+                        data: fourthQuarter,
+                        average: average(_.map(fourthQuarter, function(data){return data.placement})),
+                        min: _.min(_.pluck(fourthQuarter, 'placement')),
+                        max: _.max(_.pluck(fourthQuarter, 'placement'))
+                    }
+                )
+            }
+
+            game.sortedData.push(quarterData);
         })
         addChart(game);
-        console.log(game);
     }
 });
 
@@ -179,24 +198,7 @@ function addChart(game){
     type: 'line',
     data: {
         labels: ["1", "2", "3", "4"],
-        datasets: datasets,
-        // datasets: [{
-        //     label: 'Averag placement in quarters',
-        //     data: [12, 19, 3, 5, 2, 3],
-        //     backgroundColor: [
-        //         'rgba(255, 99, 132, 0.2)',
-        //         'rgba(54, 162, 235, 0.2)',
-        //         'rgba(255, 206, 86, 0.2)',
-        //         'rgba(75, 192, 192, 0.2)',
-        //     ],
-        //     borderColor: [
-        //         'rgba(255,99,132,1)',
-        //         'rgba(54, 162, 235, 1)',
-        //         'rgba(255, 206, 86, 1)',
-        //         'rgba(75, 192, 192, 1)',
-        //     ],
-        //     borderWidth: 1
-        // }]
+        datasets: datasets
     },
     options: {
         scales: {
@@ -218,7 +220,7 @@ function getDataForChart(game){
         var color = getRandomColor();
         var set = {
             label: data.country,
-            data: [data.quarters[0].average, data.quarters[1].average, data.quarters[2].average, data.quarters[3].average],
+            data: _.map(data.quarters, function(quarter){return quarter.average}),
             fill:false,
             backgroundColor: color,
             borderColor: color,
