@@ -14,13 +14,13 @@
 <body>
     <div id='content' class="container" ng-app='G5Data' ng-controller='MainController' style="margin-top:10px;">
         <input type="file" id="file" name="file"/>
-        <button ng-click="add()">Read file</button>
+        <button ng-click="add()">Ladda fil</button>
 
         <div style="float:right;">
             <button ng-click="iphone()">iPhone</button>
             <button ng-click="ipad()">iPad</button>
             <button ng-click="google()">Google Play</button>
-            <label for="filter" >Show only filtered games</label>
+            <label for="filter" >Visa enbart filtrerade spel</label>
             <input type="checkbox" name="filter" ng-model="useFilter" />
         </div>
         <hr/>
@@ -30,7 +30,7 @@
                 <select ng-model="game.selectedCountry" ng-change="countrySelected(game)">
                     <option ng-repeat="country in game.countries | orderBy: 'name'" value="{{country.name}}">{{country.name}}</option>
                 </select>
-                <button ng-click="showAll(game)">Show all</button>            
+                <button ng-click="showAll(game)">Visa alla</button>            
 
                 <div style="width:100%;" ng-show="game.showChart">
                     <canvas id="{{game.name}}"></canvas>
@@ -42,8 +42,8 @@
                     <table class="table table-bordered table-striped table-sm">
                         <thead>
                             <tr>
-                                <th>Quarter</th>
-                                <th>Average</th>
+                                <th>Kvartal</th>
+                                <th>Genomsnitt</th>
                                 <th>Min</th>
                                 <th>Max</th>
                             </tr>
