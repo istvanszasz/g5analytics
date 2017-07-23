@@ -80,6 +80,12 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
     }
 
     $scope.countrySelected = function(game){
+        $scope.prepareDataForCountry(game);
+        game.showChart = true;
+        ChartService.addChart(game);
+    }
+
+    $scope.prepareDataForCountry = function(game){
         var country = _.find(game.countries, function(c){ return c.name === game.selectedCountry});
 
         var gameData = country.gameData;
@@ -163,38 +169,47 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
 
             game.sortedData.push(quarterData);
         })
-        game.showChart = true;
-        ChartService.addChart(game);
     }
 
     $scope.showAll = function(game){
-        //needs to be extended with year
         game.allData = [];
         game.countries = _.sortBy(game.countries, function(country){ return country.name});
+
+        _.each(game.countries, function(country){
+            game.selectedCountry = country.name;
+            $scope.prepareDataForCountry(game);
+        });
+
+        var lowestQuarters = [];
+        //loop through every country and find the quarter with the lowest value
+        for(var i = 0; i < game.sortedData.length; i++){
+            var countryData = game.sortedData[i];
+            var flattened = _.flatten(_.map(countryData, _.values));
+            var lowestQuarterAverage = _.min(flattened, _.property('average'));
+
+            if(lowestQuarterAverage){
+                lowestQuarterAverage.isLowest = true;
+                lowestQuarters.push(lowestQuarterAverage);
+            }
+        }
 
         for(var i = 1; i < 5; i++){ //each quarter
             var quarter = {quarter: i, values:[]};
 
-            _.each(game.countries, function(country){
+            for(var j = 0; j < game.sortedData.length; j++){
+                var countryData = game.sortedData[j];
 
-                var gameData = country.gameData;
+                var quarterData = _.find(countryData.quarters, function(quarter){return quarter.quarter === i});
+                var foundInLowest = _.find(lowestQuarters, function(quarter){return quarter.quarter === i && quarter.average === quarterData.average && quarter.min === quarterData.min && quarter.max === quarterData.max});
 
-                for(var j = 0; j < gameData.length; j++){
-                    var data = gameData[j];
-                    data.quarter = moment(data.date).utc().quarter();
-                    data.year = moment(data.date).year();
+                if(quarterData){
+                    quarter.values.push({value: quarterData.average, country: countryData.country, isLowest: foundInLowest != null});
                 }
+            }
 
-                gameData = _.chain(gameData)
-                            .sortBy('year')
-                            .sortBy('quarter')
-                            .sortBy('date').value();
-                
-                var quarterData = _.filter(gameData, function(data) { return data.quarter === i});
-
-                quarter.values.push({value: UtilService.average(_.map(quarterData, function(data){return data.placement})), country: country.name});
-            })
-            game.allData.push(quarter);
-        }
+            if(quarter.values.length > 0){ //only add quarters that have data
+                game.allData.push(quarter);                
+            }
+        }        
     }
 });

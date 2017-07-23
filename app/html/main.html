@@ -12,6 +12,12 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 </head>
 <body>
+<style>
+    .lowestQuarter{
+        background-color: greenyellow;
+    }
+</style>
+
     <div id='content' class="container" ng-app='G5Data' ng-controller='MainController' style="margin-top:10px;">
         <input type="file" id="file" name="file"/>
         <button ng-click="add()">Ladda fil</button>
@@ -30,13 +36,13 @@
                 <select ng-model="game.selectedCountry" ng-change="countrySelected(game)">
                     <option ng-repeat="country in game.countries | orderBy: 'name'" value="{{country.name}}">{{country.name}}</option>
                 </select>
-                <button ng-click="showAll(game)">Visa alla</button>            
+                <button ng-click="showAll(game)" style="margin-left:10px;">Visa alla länder samlat</button>            
 
                 <div style="width:100%;" ng-show="game.showChart">
                     <canvas id="{{game.name}}"></canvas>
                 </div>
 
-                <div ng-repeat="data in game.sortedData">
+                <div ng-repeat="data in game.sortedData" ng-show="game.showChart">
                     <h4>{{data.year}} - {{data.country}}</h4>
 
                     <table class="table table-bordered table-striped table-sm">
@@ -72,7 +78,7 @@
                         <tbody>
                             <tr ng-repeat="quarter in game.allData">
                                 <td>{{quarter.quarter}}</td>
-                                <td ng-repeat="value in quarter.values">{{value.value}}</td>
+                                <td ng-repeat="value in quarter.values" ng-class="{lowestQuarter: value.isLowest == true}">{{value.value}}</td>
                             </tr>
                         </tbody>
                     </table>
