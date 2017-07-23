@@ -167,7 +167,12 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
                 )
             }
 
-            game.sortedData.push(quarterData);
+            var oldData = _.find(game.sortedData, function(data){return data.country === quarterData.country && data.year === quarterData.year});
+            if(oldData){
+                oldData = quarterData;
+            } else {
+                game.sortedData.push(quarterData);
+            }
         })
     }
 

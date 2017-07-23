@@ -1,2 +1,4 @@
 * skapa yeomanprojekt
 * visa senaste veckans data för spel/land
+* den gröna markeringen för lägsta kvartal, visa alla om samma snittvärde
+* om man klickar på "Visa alla länder.." flera gånger så läggs kolumner på i tabellen
