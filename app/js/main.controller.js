@@ -165,4 +165,35 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
         })
         ChartService.addChart(game);
     }
+
+    $scope.showAll = function(game){
+        //needs to be extended with year
+        game.allData = [];
+        game.countries = _.sortBy(game.countries, function(country){ return country.name});
+
+        for(var i = 1; i < 5; i++){ //each quarter
+            var quarter = {quarter: i, values:[]};
+
+            _.each(game.countries, function(country){
+
+                var gameData = country.gameData;
+
+                for(var j = 0; j < gameData.length; j++){
+                    var data = gameData[j];
+                    data.quarter = moment(data.date).utc().quarter();
+                    data.year = moment(data.date).year();
+                }
+
+                gameData = _.chain(gameData)
+                            .sortBy('year')
+                            .sortBy('quarter')
+                            .sortBy('date').value();
+                
+                var quarterData = _.filter(gameData, function(data) { return data.quarter === i});
+
+                quarter.values.push({value: UtilService.average(_.map(quarterData, function(data){return data.placement})), country: country.name});
+            })
+            game.allData.push(quarter);
+        }
+    }
 });

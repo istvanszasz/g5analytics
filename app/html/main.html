@@ -23,19 +23,20 @@
         <label for="filter" >Show only filtered games</label>
         <input type="checkbox" name="filter" ng-model="useFilter" />
     </div>
-<hr/>
+    <hr/>
 
     <div ng-repeat="game in games | orderBy: 'name'">
             <h3>{{game.name}}</h3>
             <select ng-model="game.selectedCountry" ng-change="countrySelected(game)">
                 <option ng-repeat="country in game.countries | orderBy: 'name'" value="{{country.name}}">{{country.name}}</option>
             </select>
+            <button ng-click="showAll(game)">Show all</button>            
 
             <div style="width:100%;">
                 <canvas id="{{game.name}}"></canvas>
             </div>
 
-            <div ng-repeat="data in game.sortedData"
+            <div ng-repeat="data in game.sortedData">
                 <h4>{{data.year}} - {{data.country}}</h4>
 
                 <table class="table table-bordered table-striped table-sm">
@@ -57,6 +58,26 @@
                     </tbody>
                 </table>
             </div>
+
+            <div>
+                <h4>{{data.year}}</h4>
+
+                <table class="table table-bordered table-striped table-sm">
+                    <thead> 
+                        <tr>
+                            <th>Quarter</th>
+                            <th ng-repeat="country in game.countries">{{country.name}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="quarter in game.allData">
+                            <td>{{quarter.quarter}}</td>
+                            <td ng-repeat="value in quarter.values">{{value.value}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
             <br/><hr/>
     </div>
 </div>
