@@ -163,6 +163,7 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
 
             game.sortedData.push(quarterData);
         })
+        game.showChart = true;
         ChartService.addChart(game);
     }
 
