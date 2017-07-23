@@ -1,6 +1,6 @@
 var app = angular.module('G5Data',[]);
 
-app.controller("MainController", function($scope, $http){
+app.controller("MainController", function($scope, $http, ChartService, UtilService, DataService){
 
     $scope.gamesWanted = ['hidden city', 'mahjong journey', 'secret society', 'twin moons society', 'supermarket mania'];
     $scope.blacklistedWords = ['hd', 'full', '2'];
@@ -12,31 +12,31 @@ app.controller("MainController", function($scope, $http){
 
         r.onloadend = function(e) {
             var data = e.target.result;
-            $scope.parseInData(decode_utf8(data));
+            $scope.parseInData(UtilService.decode_utf8(data), true);
         }
 
         r.readAsBinaryString(f);
     }
 
     $scope.iphone = function(){
-        getData($http, 'http://www.g5info.se/php/chartiphone.csv').then(function(response){
+        DataService.getData($http, 'http://www.g5info.se/php/chartiphone.csv').then(function(response){
             $scope.parseInData(response.data);            
         })
     }
 
     $scope.ipad = function(){
-        getData($http, 'http://www.g5info.se/php/chart.csv').then(function(response){
+        DataService.getData($http, 'http://www.g5info.se/php/chart.csv').then(function(response){
             $scope.parseInData(response.data);            
         })
     }
 
     $scope.google = function(){
-        getData($http, 'http://www.g5info.se/php/chart_googleplay_topgrossing.csv').then(function(response){
+        DataService.getData($http, 'http://www.g5info.se/php/chart_googleplay_topgrossing.csv').then(function(response){
             $scope.parseInData(response.data);            
         })
     }
 
-    $scope.parseInData = function(data){
+    $scope.parseInData = function(data, applyChanges){
         var lines, lineNumber, length;
         $scope.games = [];
         lines = data.split('\n');
@@ -74,7 +74,9 @@ app.controller("MainController", function($scope, $http){
             country.gameData.push({placement: parseInt(place), date: new Date(date)});
         }
 
-        $scope.$apply();
+        if(applyChanges){
+            $scope.$apply();
+        }
     }
 
     $scope.countrySelected = function(game){
@@ -116,7 +118,7 @@ app.controller("MainController", function($scope, $http){
                     {
                         quarter: 1,
                         data: firstQuarter,
-                        average: average(_.map(firstQuarter, function(data){return data.placement})),
+                        average: UtilService.average(_.map(firstQuarter, function(data){return data.placement})),
                         min: _.min(_.pluck(firstQuarter, 'placement')),
                         max: _.max(_.pluck(firstQuarter, 'placement'))
                     }
@@ -128,7 +130,7 @@ app.controller("MainController", function($scope, $http){
                     {
                         quarter: 2,
                         data: secondQuarter,
-                        average: average(_.map(secondQuarter, function(data){return data.placement})),
+                        average: UtilService.average(_.map(secondQuarter, function(data){return data.placement})),
                         min: _.min(_.pluck(secondQuarter, 'placement')),
                         max: _.max(_.pluck(secondQuarter, 'placement'))
                     }
@@ -140,7 +142,7 @@ app.controller("MainController", function($scope, $http){
                     {
                         quarter: 3,
                         data: thirdQuarter,
-                        average: average(_.map(thirdQuarter, function(data){return data.placement})),
+                        average: UtilService.average(_.map(thirdQuarter, function(data){return data.placement})),
                         min: _.min(_.pluck(thirdQuarter, 'placement')),
                         max: _.max(_.pluck(thirdQuarter, 'placement'))
                     }
@@ -152,7 +154,7 @@ app.controller("MainController", function($scope, $http){
                     {
                         quarter: 4,
                         data: fourthQuarter,
-                        average: average(_.map(fourthQuarter, function(data){return data.placement})),
+                        average: UtilService.average(_.map(fourthQuarter, function(data){return data.placement})),
                         min: _.min(_.pluck(fourthQuarter, 'placement')),
                         max: _.max(_.pluck(fourthQuarter, 'placement'))
                     }
@@ -161,81 +163,6 @@ app.controller("MainController", function($scope, $http){
 
             game.sortedData.push(quarterData);
         })
-        addChart(game);
+        ChartService.addChart(game);
     }
 });
-
-function encode_utf8(s) {
-  return unescape(encodeURIComponent(s));
-}
-
-function decode_utf8(s) {
-  return decodeURIComponent(escape(s));
-}
-
-function average(array){
-    return Math.round(_.reduce(array, function(memo, num) {
-        return memo + num;
-      }, 0) / (array.length === 0 ? 1 : array.length), 0);
-}
-
-function getData(http, url){
-    return http({
-    method: 'GET',
-    headers: {
-        'Access-Control-Allow-Origin' : '*',
-        'Access-Control-Allow-Headers' : 'Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With',
-        'Access-Control-Allow-Methods' : 'GET, PUT, POST',
-    },
-    url: url
-    });
-}
-
-function addChart(game){
-    var ctx = document.getElementById(game.name).getContext('2d');
-    var datasets = getDataForChart(game);
-    var myChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ["1", "2", "3", "4"],
-        datasets: datasets
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero:true
-                }
-            }]
-        }
-    }
-    });
-}
-
-function getDataForChart(game){
-    var dataSet = [];
-
-    for(var i = 0; i < game.sortedData.length; i++){
-        var data = game.sortedData[i];
-        var color = getRandomColor();
-        var set = {
-            label: data.country,
-            data: _.map(data.quarters, function(quarter){return quarter.average}),
-            fill:false,
-            backgroundColor: color,
-            borderColor: color,
-            borderWidth: 1
-        }
-        dataSet.push(set);
-    }
-    return dataSet;    
-}
-
-function getRandomColor() {
-    var letters = '0123456789ABCDEF'.split('');
-    var color = '#';
-    for (var i = 0; i < 6; i++ ) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-}
