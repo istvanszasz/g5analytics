@@ -80,12 +80,10 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
     }
 
     $scope.countrySelected = function(game){
-        $scope.prepareDataForCountry(game);
-        game.showChart = true;
-        ChartService.addChart(game);
+        $scope.prepareDataForCountry(game, true);
     }
 
-    $scope.prepareDataForCountry = function(game){
+    $scope.prepareDataForCountry = function(game, addToChart){
         var country = _.find(game.countries, function(c){ return c.name === game.selectedCountry});
 
         var gameData = country.gameData;
@@ -174,6 +172,11 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
                 game.sortedData.push(quarterData);
             }
         })
+
+        if(addToChart){
+            game.showChart = true;
+            ChartService.addChart(game, country);
+        }
     }
 
     $scope.showAll = function(game){

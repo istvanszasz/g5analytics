@@ -1,14 +1,22 @@
 angular.module('G5Data').service('ChartService', function(UtilService) {
 
     var vm = this;
+    var countries = [];
+    var chart;
 
-    vm.addChart = function(game){
+    vm.addChart = function(game, country){
         var ctx = document.getElementById(game.name).getContext('2d');
-        var datasets = getDataForChart(game);
-        var myChart = new Chart(ctx, {
+
+        countries.push(country);
+        var gameData = _.sortBy(country.gameData, function(data){return data.date});
+        var labels = _.map(gameData, function(data){return moment(data.date).format('YYYY-MM-DD')});
+
+        var datasets = getDataForChart(countries);        
+
+        chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ["1", "2", "3", "4"],
+            labels: labels,
             datasets: datasets
         },
         options: {
@@ -23,15 +31,20 @@ angular.module('G5Data').service('ChartService', function(UtilService) {
         });
     }
 
-    function getDataForChart(game){
+    function getDataForChart(countries){
         var dataSet = [];
 
-        for(var i = 0; i < game.sortedData.length; i++){
-            var data = game.sortedData[i];
+        for(var i = 0; i < countries.length; i++){
+            var country = countries[i];
+            
+            var gameData = _.sortBy(country.gameData, function(data){return data.date});
+            var labels = _.map(gameData, function(data){return moment(data.date).format('YYYY-MM-DD')});
+            var points = _.map(gameData, function(data){return data.placement});
+
             var color = UtilService.getRandomColor();
             var set = {
-                label: data.country,
-                data: _.map(data.quarters, function(quarter){return quarter.average}),
+                label: country.name,
+                data: points,
                 fill:false,
                 backgroundColor: color,
                 borderColor: color,
