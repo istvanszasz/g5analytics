@@ -2,7 +2,7 @@ var app = angular.module('G5Data',[]);
 
 app.controller("MainController", function($scope, $http, ChartService, UtilService, DataService){
 
-    $scope.gamesWanted = ['hidden city', 'mahjong journey', 'secret society', 'twin moons society', 'supermarket mania'];
+    $scope.gamesWanted = ['hidden city', 'mahjong journey', 'secret society', 'twin moons society', 'supermarket mania', 'pirates & pearls'];
     $scope.blacklistedWords = ['hd', 'full', '2'];
     $scope.useFilter = true;
 
@@ -41,6 +41,7 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
         $scope.games = [];
         lines = data.split('\n');
         lineNumber = 0;
+        
         for (var i = lines.length - 1; i >= 0; i--) {
             l = lines[i];
 
@@ -57,7 +58,10 @@ app.controller("MainController", function($scope, $http, ChartService, UtilServi
                 continue; //if no name or game not wanted (not in gamesWanted list), move on
             }
 
-            var game = _.find($scope.games, function(game){ return game.name === name});
+            var trimmedName = name.replace('®', '');
+            name = trimmedName.replace('™', '');
+
+            var game = _.find($scope.games, function(game){ return name.toLowerCase().startsWith(game.name.toLowerCase())});
 
             if(!game){
                 game = { name: name, countries : [], sortedData:[]}
